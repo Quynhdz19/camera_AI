@@ -16,14 +16,15 @@ from ultralytics import YOLO
 app = Flask(__name__)
 
 # EZVIZ RTSP Configuration
-RTSP_URL = "rtsp://admin:EEZSQY@192.168.1.5:554/h264/ch01/sub/av_stream"
+RTSP_URL = "rtsp://admin:AWEHQM@192.168.0.104:554/h264/ch01/sub/av_stream"
 USE_RTSP = True
 
 # Optimization settings
-STREAM_WIDTH = 640      # Tăng lên 640 vì YOLO nhanh hơn HOG
+STREAM_WIDTH = 640      # Kích thước stream khi không dùng full-res
 STREAM_HEIGHT = 360
-DETECTION_INTERVAL = 1  # Detect mỗi 1 giây vì YOLO nhanh
-JPEG_QUALITY = 60
+USE_NATIVE_RESOLUTION = True  # Bật để stream full độ phân giải camera
+DETECTION_INTERVAL = 1        # Detect mỗi 1 giây vì YOLO nhanh
+JPEG_QUALITY = 85             # Tăng chất lượng JPEG cho stream full-res
 TARGET_FPS = 15
 
 # Global variables
@@ -151,19 +152,56 @@ def detection_thread():
             print(f"Detection thread error: {e}")
             time.sleep(1)
 
+def crop_to_aspect(frame, target_w, target_h):
+    """Center-crop frame to target aspect ratio so the stream fills the view"""
+    if frame is None:
+        return frame
+    
+    h, w = frame.shape[:2]
+    if h == 0 or w == 0:
+        return frame
+    
+    target_ratio = target_w / target_h
+    frame_ratio = w / h
+    
+    # If frame is wider than target, trim width; if taller, trim height
+    if frame_ratio > target_ratio:
+        new_w = int(h * target_ratio)
+        x0 = (w - new_w) // 2
+        return frame[:, x0:x0 + new_w]
+    elif frame_ratio < target_ratio:
+        new_h = int(w / target_ratio)
+        y0 = (h - new_h) // 2
+        return frame[y0:y0 + new_h, :]
+    
+    return frame
+
+def shrink_box(box, factor=0.9):
+    """Shrink a box toward its center to reduce visual footprint"""
+    x, y, w, h = box
+    cx = x + w / 2
+    cy = y + h / 2
+    new_w = max(2, int(w * factor))
+    new_h = max(2, int(h * factor))
+    new_x = int(cx - new_w / 2)
+    new_y = int(cy - new_h / 2)
+    return new_x, new_y, new_w, new_h
+
 def draw_detections(frame):
     """Draw YOLO detection boxes - RÕ RÀNG"""
     for idx, ((x, y, w, h), conf) in enumerate(detection_boxes):
+        # Shrink boxes slightly so they look less bulky
+        x, y, w, h = shrink_box((x, y, w, h), factor=0.9)
         # KHUNG CHÍNH - MÀU XANH LÁ NEON
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 4)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         
         # KHUNG PHỤ BÊN TRONG - MÀU VÀNG
-        cv2.rectangle(frame, (x+3, y+3), (x + w-3, y + h-3), (0, 255, 255), 2)
+        cv2.rectangle(frame, (x+3, y+3), (x + w-3, y + h-3), (0, 255, 255), 1)
         
         # VẼ GÓC - MÀU ĐỎ
-        corner_len = 30
+        corner_len = 18
         corner_color = (0, 0, 255)
-        thickness = 5
+        thickness = 3
         
         # Top-left
         cv2.line(frame, (x, y), (x + corner_len, y), corner_color, thickness)
@@ -177,61 +215,11 @@ def draw_detections(frame):
         # Bottom-right
         cv2.line(frame, (x + w, y + h), (x + w - corner_len, y + h), corner_color, thickness)
         cv2.line(frame, (x + w, y + h), (x + w, y + h - corner_len), corner_color, thickness)
-        
-        # LABEL với confidence
-        label = f"PERSON {int(conf*100)}%"
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        font_scale = 0.9
-        font_thickness = 3
-        label_size = cv2.getTextSize(label, font, font_scale, font_thickness)[0]
-        
-        # Background VÀNG NEON
-        label_x = max(x, 0)
-        label_y = max(y - label_size[1] - 15, label_size[1] + 10)
-        cv2.rectangle(frame, 
-                     (label_x, label_y - label_size[1] - 10), 
-                     (label_x + label_size[0] + 10, label_y + 5), 
-                     (0, 255, 255), -1)
-        
-        # Text ĐEN
-        cv2.putText(frame, label, (label_x + 5, label_y), 
-                    font, font_scale, (0, 0, 0), font_thickness)
     
     return frame
 
 def draw_overlay(frame):
-    """Draw overlay"""
-    h, w = frame.shape[:2]
-    
-    # Detection counter
-    if detected_persons > 0:
-        counter_text = f"DETECTED: {detected_persons} PERSON(S)"
-        text_size = cv2.getTextSize(counter_text, cv2.FONT_HERSHEY_SIMPLEX, 0.9, 2)[0]
-        
-        cv2.rectangle(frame, (10, 10), (20 + text_size[0], 45 + text_size[1]), (0, 255, 0), -1)
-        cv2.putText(frame, counter_text, (15, 40), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 0), 2)
-    
-    # YOLO indicator
-    yolo_text = "YOLO"
-    if detection_active:
-        cv2.circle(frame, (w - 30, 30), 12, (0, 255, 0), -1)
-    cv2.putText(frame, yolo_text, (w - 55, 37), 
-                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-    
-    # Crosshair
-    cx, cy = w // 2, h // 2
-    color = (0, 255, 255)
-    cv2.circle(frame, (cx, cy), 25, color, 1)
-    cv2.circle(frame, (cx, cy), 3, color, -1)
-    
-    gap = 8
-    length = 15
-    cv2.line(frame, (cx - gap - length, cy), (cx - gap, cy), color, 1)
-    cv2.line(frame, (cx + gap, cy), (cx + gap + length, cy), color, 1)
-    cv2.line(frame, (cx, cy - gap - length), (cx, cy - gap), color, 1)
-    cv2.line(frame, (cx, cy + gap), (cx, cy + gap + length), color, 1)
-    
+    """No overlay; keep frame clean with only boxes"""
     return frame
 
 def reconnect_camera():
@@ -287,9 +275,13 @@ def generate_frames():
         failed_reads = 0
         frame_count += 1
         
-        # Resize for streaming
-        frame_display = cv2.resize(frame, (STREAM_WIDTH, STREAM_HEIGHT), 
-                                   interpolation=cv2.INTER_LINEAR)
+        # Stream full camera resolution when enabled; otherwise crop/resize
+        if USE_NATIVE_RESOLUTION:
+            frame_display = frame
+        else:
+            frame_cropped = crop_to_aspect(frame, STREAM_WIDTH, STREAM_HEIGHT)
+            frame_display = cv2.resize(frame_cropped, (STREAM_WIDTH, STREAM_HEIGHT), 
+                                       interpolation=cv2.INTER_LINEAR)
         
         # Send to YOLO detection thread
         current_time = time.time()
@@ -377,5 +369,5 @@ if __name__ == '__main__':
     sensor_thread.start()
     
     # Run Flask
-    app.run(host='0.0.0.0', port=5001, debug=False, threaded=True)
+    app.run(host='0.0.0.0', port=5003, debug=False, threaded=True)
 
