@@ -1,0 +1,633 @@
+/* SAR-BOT PRO - AI Camera System Styles */
+
+:root {
+    --bg-primary: #0a0f1a;
+    --bg-secondary: #0d1525;
+    --bg-card: #111b2e;
+    --bg-card-hover: #152238;
+    --cyan-primary: #00d4ff;
+    --cyan-secondary: #00a8cc;
+    --cyan-glow: rgba(0, 212, 255, 0.3);
+    --green-primary: #00ff88;
+    --green-secondary: #00cc6a;
+    --yellow-primary: #ffc107;
+    --orange-primary: #ff8c00;
+    --red-primary: #ff4444;
+    --text-primary: #ffffff;
+    --text-secondary: #8899aa;
+    --text-muted: #556677;
+    --border-color: #1a2a40;
+    --border-glow: rgba(0, 212, 255, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Share Tech Mono', monospace;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+        radial-gradient(ellipse at 20% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg-primary) 0%, #060a12 100%);
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--cyan-secondary) 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-primary);
+    box-shadow: 0 0 20px var(--cyan-glow);
+}
+
+.logo-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.brand-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.brand-pro {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--cyan-primary);
+    margin-left: 10px;
+    text-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 3px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green-primary);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 10px var(--green-primary);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.status-text {
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+}
+
+.header-right {
+    display: flex;
+    gap: 40px;
+}
+
+.status-item {
+    text-align: right;
+}
+
+.status-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.status-value {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--cyan-primary);
+}
+
+.wifi-icon, .battery-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--green-primary);
+}
+
+/* Main Content */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    flex: 1;
+}
+
+/* Camera Section */
+.camera-section {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.camera-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.camera-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.camera-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--cyan-primary);
+}
+
+.camera-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.rec-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 68, 68, 0.2);
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 68, 68, 0.5);
+}
+
+.rec-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--red-primary);
+    border-radius: 50%;
+    animation: rec-blink 1s ease-in-out infinite;
+}
+
+@keyframes rec-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.camera-id {
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.camera-feed {
+    position: relative;
+    flex: 1;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.video-stream {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.coords {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--cyan-primary);
+    text-align: right;
+    line-height: 1.6;
+    text-shadow: 0 0 10px var(--cyan-glow);
+}
+
+.detection-info {
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    font-size: 14px;
+    color: var(--green-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.detection-info.active {
+    opacity: 1;
+}
+
+.person-count {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--cyan-primary) 50%, 
+        transparent 100%);
+    opacity: 0.5;
+    animation: scan 3s linear infinite;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+/* Side Panel */
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Sensor Cards */
+.sensor-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sensor-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--cyan-primary);
+    box-shadow: 0 0 20px var(--border-glow);
+}
+
+.sensor-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.sensor-icon svg {
+    width: 28px;
+    height: 28px;
+    color: var(--text-secondary);
+}
+
+/* Icon colors for different sensors */
+.gas-icon svg {
+    color: var(--yellow-primary);
+}
+
+.dust-icon svg {
+    color: var(--cyan-primary);
+}
+
+.temp-icon svg {
+    color: var(--orange-primary);
+}
+
+.co-icon svg {
+    color: var(--red-primary);
+}
+
+.sensor-ring {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+}
+
+.gas-ring::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top-color: var(--yellow-primary);
+    border-right-color: var(--yellow-primary);
+    border-radius: 50%;
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.sensor-info {
+    flex: 1;
+}
+
+.sensor-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.sensor-value {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.sensor-value span:first-child {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.sensor-unit {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Logs Panel */
+.logs-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 250px;
+}
+
+.logs-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logs-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--cyan-primary);
+}
+
+.logs-header span {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+    flex: 1;
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.control-dot.red { background: var(--red-primary); }
+.control-dot.yellow { background: var(--yellow-primary); }
+.control-dot.green { background: var(--green-primary); }
+
+.logs-content {
+    flex: 1;
+    padding: 15px 20px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.log-entry {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.log-time {
+    color: var(--text-muted);
+}
+
+.log-arrow {
+    color: var(--cyan-primary);
+}
+
+.log-message {
+    color: var(--text-secondary);
+}
+
+.log-message.highlight {
+    color: var(--yellow-primary);
+    text-transform: uppercase;
+}
+
+.cursor-blink {
+    width: 10px;
+    height: 18px;
+    background: var(--cyan-primary);
+    animation: blink 1s step-end infinite;
+    margin-top: 5px;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cyan-secondary);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .side-panel {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .logs-panel {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 900px) {
+    .side-panel {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .sensor-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 10px;
+        gap: 15px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .side-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    .logs-panel {
+        grid-column: span 1;
+    }
+    
+    .sensor-card {
+        padding: 18px;
+    }
+    
+    .sensor-value span:first-child {
+        font-size: 28px;
+    }
+    
+    .brand-name, .brand-pro {
+        font-size: 18px;
+    }
+    
+    .camera-feed {
+        min-height: 300px;
+    }
+}
+
+
